@@ -1,3 +1,4 @@
+.env
 UrlShortener.sql
 main
 *.zip
