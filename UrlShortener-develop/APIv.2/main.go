@@ -67,7 +67,7 @@ func runPost(c *gin.Context) {
 	user.UserKey = MD5(secretKey)
 
 	// Подключение к БД
-	db, err := sql.Open("mysql", "admin:zePh8gTsiawj2NWhze6p@tcp(ec2-44-194-91-165.compute-1.amazonaws.com:3306)/UrlShortener")
+	db, err := sql.Open("mysql", os.Getenv("CONNECTION_STRING")) // "user_name:password@tcp(host_name:3306)/db_name"
 	if err != nil {
 		panic(err)
 	}
@@ -135,7 +135,7 @@ func runGet(c *gin.Context) {
 	}
 
 	// Подключение к БД
-	db, err := sql.Open("mysql", "admin:zePh8gTsiawj2NWhze6p@tcp(ec2-44-194-91-165.compute-1.amazonaws.com:3306)/UrlShortener")
+	db, err := sql.Open("mysql", os.Getenv("CONNECTION_STRING"))
 	if err != nil {
 		panic(err)
 	}
@@ -247,6 +247,11 @@ func shortener() string {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	
 	if inLambda() {
 		fmt.Println("running aws lambda in aws")
 		log.Fatal(gateway.ListenAndServe(":8080", setupRouter()))
